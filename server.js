@@ -29,7 +29,7 @@ app.post('/api/download', async (req, res) => {
 });
 
 // Servir la aplicación frontend
-app.get('*', (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
