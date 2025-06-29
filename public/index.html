@@ -1,101 +1,63 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok DL by kenn</title>
-    <meta name="description" content="Descarga videos de TikTok sin marca de agua">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Descargador de TikTok</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .glass {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-purple-900 to-indigo-800 min-h-screen">
-    <div class="container mx-auto px-4 py-8 md:py-12">
-        <header class="text-center mb-8 md:mb-12">
-            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2 md:mb-4">TikTok Video Downloader</h1>
-            <p class="text-base sm:text-lg text-purple-200">Descarga videos en alta calidad sin marca de agua</p>
-        </header>
+<body class="bg-gradient-to-br from-purple-700 to-indigo-800 min-h-screen text-white flex items-center justify-center px-4">
+  <div class="glass p-6 rounded-2xl w-full max-w-lg shadow-2xl fade-in">
+    <h1 class="text-3xl font-bold mb-6 text-center">Descargar Video de TikTok</h1>
+    <input id="tiktok-url" type="text" placeholder="https://www.tiktok.com/t/ZP8rc4VKK/" class="w-full p-3 rounded-xl bg-white/20 placeholder-white/70 text-white mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+    <button onclick="downloadVideo()" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 font-semibold shadow-md">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+      </svg>
+      Descargar
+    </button>
 
-        <main class="max-w-2xl mx-auto">
-            <div class="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-2xl p-4 sm:p-6">
-                <div class="mb-4 sm:mb-6">
-                    <label for="tiktok-url" class="block text-white text-sm sm:text-lg font-medium mb-1 sm:mb-2">Pega el enlace de TikTok</label>
-                    <div class="flex flex-col sm:flex-row gap-2">
-                        <input 
-                            type="url" 
-                            id="tiktok-url" 
-                            placeholder="https://www.tiktok.com/@usuario/video/123456789" 
-                            class="flex-grow px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-l-lg sm:rounded-r-none focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white bg-opacity-20 text-white placeholder-purple-200 text-sm sm:text-base"
-                        >
-                        <button 
-                            id="download-btn" 
-                            class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 sm:py-3 rounded-lg sm:rounded-r-lg sm:rounded-l-none font-medium transition-all duration-300 flex items-center justify-center text-sm sm:text-base"
-                        >
-                            <i class="fas fa-download mr-1 sm:mr-2"></i> Descargar
-                        </button>
-                    </div>
-                </div>
-
-                <div id="loading" class="hidden text-center py-6 sm:py-8">
-                    <div class="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-t-2 border-b-2 border-purple-400 mx-auto mb-3 sm:mb-4"></div>
-                    <p class="text-purple-200 text-sm sm:text-base">Procesando video...</p>
-                </div>
-
-                <div id="error" class="hidden bg-red-500 bg-opacity-20 text-red-200 p-3 sm:p-4 rounded-lg mb-4 sm:mb-6 text-sm sm:text-base"></div>
-
-                <div id="result" class="hidden">
-                    <div class="flex flex-col md:flex-row gap-4 sm:gap-6">
-                        <div class="bg-black bg-opacity-30 rounded-lg overflow-hidden flex-1">
-                            <video id="video-preview" controls class="w-full aspect-video" poster="" preload="metadata">
-                                Tu navegador no soporta el elemento de video.
-                            </video>
-                        </div>
-                        <div class="text-white flex-1">
-                            <div class="flex items-center mb-3 sm:mb-4">
-                                <img id="profile-pic" src="" alt="Profile" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full mr-2 sm:mr-3 object-cover">
-                                <div>
-                                    <h3 id="video-author" class="font-bold text-base sm:text-lg"></h3>
-                                    <p id="video-username" class="text-purple-200 text-xs sm:text-sm"></p>
-                                </div>
-                            </div>
-                            <h2 id="video-title" class="text-lg sm:text-xl font-bold mb-2 sm:mb-3"></h2>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3 sm:mb-4">
-                                <div class="bg-white bg-opacity-10 rounded p-1 sm:p-2 text-center">
-                                    <i class="fas fa-heart text-red-400 text-xs sm:text-sm"></i>
-                                    <p id="video-likes" class="text-xs sm:text-sm"></p>
-                                </div>
-                                <div class="bg-white bg-opacity-10 rounded p-1 sm:p-2 text-center">
-                                    <i class="fas fa-comment text-blue-400 text-xs sm:text-sm"></i>
-                                    <p id="video-comments" class="text-xs sm:text-sm"></p>
-                                </div>
-                                <div class="bg-white bg-opacity-10 rounded p-1 sm:p-2 text-center">
-                                    <i class="fas fa-share text-green-400 text-xs sm:text-sm"></i>
-                                    <p id="video-shares" class="text-xs sm:text-sm"></p>
-                                </div>
-                                <div class="bg-white bg-opacity-10 rounded p-1 sm:p-2 text-center">
-                                    <i class="fas fa-eye text-yellow-400 text-xs sm:text-sm"></i>
-                                    <p id="video-views" class="text-xs sm:text-sm"></p>
-                                </div>
-                            </div>
-                            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                                <a id="download-video-btn" href="#" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-3 sm:px-4 rounded-lg text-center transition-colors duration-300 text-sm sm:text-base">
-                                    <i class="fas fa-download mr-1 sm:mr-2"></i> Video
-                                </a>
-                                <a id="download-music-btn" href="#" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 sm:px-4 rounded-lg text-center transition-colors duration-300 text-sm sm:text-base">
-                                    <i class="fas fa-music mr-1 sm:mr-2"></i> Música
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+    <div id="loading" class="hidden mt-6 flex justify-center">
+      <div class="w-10 h-10 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
     </div>
 
-    <footer class="text-center text-purple-300 py-4 text-xs sm:text-sm">
-        <p>No almacenamos ningún video</p>
-    </footer>
+    <div id="result" class="mt-8 hidden fade-in">
+      <video id="video-player" controls class="w-full rounded-xl shadow-md mb-4"></video>
+      <p id="video-title" class="font-bold text-xl mb-1"></p>
+      <p id="video-author" class="text-sm mb-4"></p>
 
-    <script src="script.js"></script>
+      <div id="video-metadata" class="text-sm space-y-1 mb-4">
+        <p><strong>Publicado:</strong> <span id="published"></span></p>
+        <p><strong>Likes:</strong> <span id="likes"></span></p>
+        <p><strong>Comentarios:</strong> <span id="comments"></span></p>
+        <p><strong>Compartidos:</strong> <span id="shares"></span></p>
+        <p><strong>Vistas:</strong> <span id="views"></span></p>
+        <p><strong>Guardados:</strong> <span id="bookmarks"></span></p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <button id="download-video" class="bg-green-500 hover:bg-green-600 p-3 rounded-xl shadow text-white font-semibold">📥 Video</button>
+        <button id="download-audio" class="bg-blue-500 hover:bg-blue-600 p-3 rounded-xl shadow text-white font-semibold">🎧 Audio</button>
+      </div>
+    </div>
+
+    <p id="error-message" class="text-red-400 mt-4 hidden text-center font-medium"></p>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
