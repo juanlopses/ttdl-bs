@@ -1,0 +1,62 @@
+/* Animaciones y transiciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Optimización del video */
+video {
+    transition: opacity 0.3s ease;
+    min-height: 200px;
+}
+
+video[poster] {
+    opacity: 0;
+    transition: opacity 0.3s ease 0.1s;
+}
+
+video[poster].loaded {
+    opacity: 1;
+}
+
+/* Mejoras específicas para móviles */
+@media (max-width: 640px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    #result .flex {
+        flex-direction: column;
+    }
+    
+    #video-preview {
+        max-height: 60vh;
+    }
+}
+
+/* Ajustes para tablets */
+@media (min-width: 641px) and (max-width: 1023px) {
+    #result .flex {
+        flex-direction: column;
+    }
+    
+    #video-preview {
+        max-height: 70vh;
+    }
+}
+
+/* Mejoras de rendimiento */
+* {
+    scroll-behavior: smooth;
+}
+
+/* Optimización de botones para touch */
+button, a {
+    touch-action: manipulation;
+    min-height: 44px; /* Tamaño mínimo para touch */
+}
