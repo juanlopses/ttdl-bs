@@ -1,38 +1,59 @@
-const express = require('express');
-const path = require('path');
-const { ttdl } = require('ruhend-scraper');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
+const { ttdl } = require("ruhend-scraper");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static("public"));
 
-// Ruta para la API de TikTok
-app.post('/api/download', async (req, res) => {
-    try {
-        const { url } = req.body;
-        
-        if (!url) {
-            return res.status(400).json({ error: 'URL is required' });
-        }
+app.post("/api/download", async (req, res) => {
+  const { url } = req.body;
+  try {
+    const canonicalURL = url.includes("/t/") ? await resolveShortURL(url) : url;
+    const data = await ttdl(canonicalURL);
 
-        const data = await ttdl(url);
-        res.json(data);
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Failed to process TikTok URL' });
-    }
+    const {
+      title,
+      author,
+      username,
+      published,
+      like,
+      comment,
+      share,
+      views,
+      bookmark,
+      video,
+      cover,
+      music,
+      profilePicture
+    } = data;
+
+    res.json({
+      title,
+      author,
+      username,
+      published,
+      like,
+      comment,
+      share,
+      views,
+      bookmark,
+      video,
+      cover,
+      music,
+      profilePicture
+    });
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(400).json({ error: "No se pudo procesar el enlace." });
+  }
 });
 
-// Servir la aplicación frontend
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+async function resolveShortURL(shortUrl) {
+  const response = await fetch(shortUrl, { method: "HEAD", redirect: "follow" });
+  return response.url;
+}
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor corriendo en el puerto ${PORT}`));
